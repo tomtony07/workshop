@@ -22,5 +22,9 @@
 </head>
 <body>
     <h1>The result is <span>{{ result }}</span></h1>
-</body>
+
+        {% if img_data %}
+            <img src="data:image/jpeg;base64,{{ img_data }}" alt="Image from backend" style="max-width: 300px; margin: 0 auto; display: block;">
+        {% endif %}
+    </div>
 </html>

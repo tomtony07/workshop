@@ -7,6 +7,8 @@ import sys
 import pathlib
 from pycaret.regression import *
 import pandas as pd
+import base64
+import io
 
 if sys.platform == "win32":
   temp = pathlib.PosixPath
@@ -48,9 +50,14 @@ def process_form():
 @app.route('/classify', methods=['POST'])
 def upload_image():
     img = Image.open(request.files['input_image'].stream)
-    img = tensor(img)  # converts the image to tensor.
-    result = vision_model.predict(img)[0].capitalize()
-    return render_template('result.html', result=result)
+    tensor_img = tensor(img)  # converts the image to tensor.
+    result = vision_model.predict(tensor_img)[0].capitalize()
+
+    data = io.BytesIO()
+    img.save(data, "JPEG")
+    encoded_img_data = base64.b64encode(data.getvalue())
+
+    return render_template('result.html', result=result, img_data = encoded_img_data.decode('utf-8'))
 
 if __name__ == '__main__':
     app.run(debug=True)
